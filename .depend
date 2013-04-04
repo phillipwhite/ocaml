@@ -1,0 +1,21 @@
+environment.cmi: syntax.cmx
+mySet.cmi:
+parser.cmi: syntax.cmx
+environment.cmo: syntax.cmx environment.cmi
+environment.cmx: syntax.cmx environment.cmi
+eval.cmo: syntax.cmx environment.cmi
+eval.cmx: syntax.cmx environment.cmx
+lexer.cmo: parser.cmi
+lexer.cmx: parser.cmx
+main.cmo: typing.cmx syntax.cmx parser.cmi lexer.cmx eval.cmx environment.cmi
+main.cmx: typing.cmx syntax.cmx parser.cmx lexer.cmx eval.cmx environment.cmx
+mySet.cmo: mySet.cmi
+mySet.cmx: mySet.cmi
+parser.cmo: syntax.cmx parser.cmi
+parser.cmx: syntax.cmx parser.cmi
+syntax.cmo: mySet.cmi
+syntax.cmx: mySet.cmx
+test1.cmo:
+test1.cmx:
+typing.cmo: syntax.cmx mySet.cmi environment.cmi
+typing.cmx: syntax.cmx mySet.cmx environment.cmx

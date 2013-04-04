@@ -1,0 +1,877 @@
+   0  $accept : %entry% $end
+
+   1  toplevel : ClassDec
+   2           | Term SEMI
+
+   3  ClassDec : CLASS ID EXTENDS ID LCURL ClassBody RCURL
+
+   4  ClassBody : fDecs Constructor Methods
+   5            | fDecs Constructor
+   6            | Constructor Methods
+   7            | Constructor
+
+   8  fDecs : fDec
+   9        | fDecs fDec
+
+  10  fDec : ID ID SEMI
+
+  11  Constructor : ID LPAREN parameter RPAREN LCURL ConBody RCURL
+  12              | ID LPAREN RPAREN LCURL ConBody RCURL
+
+  13  ConBody : SUPER LPAREN RPAREN SEMI
+  14          | SUPER LPAREN super_argument RPAREN SEMI
+  15          | SUPER LPAREN super_argument RPAREN SEMI These
+  16          | SUPER LPAREN RPAREN SEMI These
+
+  17  These : THIS DOT ID EQ ID SEMI
+  18        | THIS DOT ID EQ ID SEMI These
+
+  19  parameter : ID ID
+  20            | parameter COLON ID ID
+
+  21  super_argument : ID
+  22                 | super_argument COLON ID
+
+  23  Methods : Method
+  24          | Methods Method
+
+  25  Method : ID ID LPAREN parameter RPAREN LCURL RET Term SEMI RCURL
+  26         | ID ID LPAREN RPAREN LCURL RET Term SEMI RCURL
+
+  27  Term : ID
+  28       | THIS
+  29       | Term DOT ID
+  30       | Term DOT ID LPAREN expr_argument RPAREN
+  31       | Term DOT ID LPAREN RPAREN
+  32       | NEW ID LPAREN expr_argument RPAREN
+  33       | NEW ID LPAREN RPAREN
+  34       | LPAREN LPAREN ID RPAREN Term RPAREN
+
+  35  expr_argument : Term
+  36                | expr_argument COLON Term
+
+  37  %entry% : '\001' toplevel
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . toplevel  (37)
+
+	LPAREN  shift 3
+	CLASS  shift 4
+	NEW  shift 5
+	THIS  shift 6
+	ID  shift 7
+	.  error
+
+	toplevel  goto 8
+	ClassDec  goto 9
+	Term  goto 10
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	Term : LPAREN . LPAREN ID RPAREN Term RPAREN  (34)
+
+	LPAREN  shift 11
+	.  error
+
+
+state 4
+	ClassDec : CLASS . ID EXTENDS ID LCURL ClassBody RCURL  (3)
+
+	ID  shift 12
+	.  error
+
+
+state 5
+	Term : NEW . ID LPAREN expr_argument RPAREN  (32)
+	Term : NEW . ID LPAREN RPAREN  (33)
+
+	ID  shift 13
+	.  error
+
+
+state 6
+	Term : THIS .  (28)
+
+	.  reduce 28
+
+
+state 7
+	Term : ID .  (27)
+
+	.  reduce 27
+
+
+state 8
+	%entry% : '\001' toplevel .  (37)
+
+	.  reduce 37
+
+
+state 9
+	toplevel : ClassDec .  (1)
+
+	.  reduce 1
+
+
+state 10
+	toplevel : Term . SEMI  (2)
+	Term : Term . DOT ID  (29)
+	Term : Term . DOT ID LPAREN expr_argument RPAREN  (30)
+	Term : Term . DOT ID LPAREN RPAREN  (31)
+
+	SEMI  shift 14
+	DOT  shift 15
+	.  error
+
+
+state 11
+	Term : LPAREN LPAREN . ID RPAREN Term RPAREN  (34)
+
+	ID  shift 16
+	.  error
+
+
+state 12
+	ClassDec : CLASS ID . EXTENDS ID LCURL ClassBody RCURL  (3)
+
+	EXTENDS  shift 17
+	.  error
+
+
+state 13
+	Term : NEW ID . LPAREN expr_argument RPAREN  (32)
+	Term : NEW ID . LPAREN RPAREN  (33)
+
+	LPAREN  shift 18
+	.  error
+
+
+state 14
+	toplevel : Term SEMI .  (2)
+
+	.  reduce 2
+
+
+state 15
+	Term : Term DOT . ID  (29)
+	Term : Term DOT . ID LPAREN expr_argument RPAREN  (30)
+	Term : Term DOT . ID LPAREN RPAREN  (31)
+
+	ID  shift 19
+	.  error
+
+
+state 16
+	Term : LPAREN LPAREN ID . RPAREN Term RPAREN  (34)
+
+	RPAREN  shift 20
+	.  error
+
+
+state 17
+	ClassDec : CLASS ID EXTENDS . ID LCURL ClassBody RCURL  (3)
+
+	ID  shift 21
+	.  error
+
+
+state 18
+	Term : NEW ID LPAREN . expr_argument RPAREN  (32)
+	Term : NEW ID LPAREN . RPAREN  (33)
+
+	LPAREN  shift 3
+	RPAREN  shift 22
+	NEW  shift 5
+	THIS  shift 6
+	ID  shift 7
+	.  error
+
+	Term  goto 23
+	expr_argument  goto 24
+
+
+state 19
+	Term : Term DOT ID .  (29)
+	Term : Term DOT ID . LPAREN expr_argument RPAREN  (30)
+	Term : Term DOT ID . LPAREN RPAREN  (31)
+
+	LPAREN  shift 25
+	RPAREN  reduce 29
+	SEMI  reduce 29
+	DOT  reduce 29
+	COLON  reduce 29
+
+
+state 20
+	Term : LPAREN LPAREN ID RPAREN . Term RPAREN  (34)
+
+	LPAREN  shift 3
+	NEW  shift 5
+	THIS  shift 6
+	ID  shift 7
+	.  error
+
+	Term  goto 26
+
+
+state 21
+	ClassDec : CLASS ID EXTENDS ID . LCURL ClassBody RCURL  (3)
+
+	LCURL  shift 27
+	.  error
+
+
+state 22
+	Term : NEW ID LPAREN RPAREN .  (33)
+
+	.  reduce 33
+
+
+state 23
+	Term : Term . DOT ID  (29)
+	Term : Term . DOT ID LPAREN expr_argument RPAREN  (30)
+	Term : Term . DOT ID LPAREN RPAREN  (31)
+	expr_argument : Term .  (35)
+
+	DOT  shift 15
+	RPAREN  reduce 35
+	COLON  reduce 35
+
+
+state 24
+	Term : NEW ID LPAREN expr_argument . RPAREN  (32)
+	expr_argument : expr_argument . COLON Term  (36)
+
+	RPAREN  shift 28
+	COLON  shift 29
+	.  error
+
+
+state 25
+	Term : Term DOT ID LPAREN . expr_argument RPAREN  (30)
+	Term : Term DOT ID LPAREN . RPAREN  (31)
+
+	LPAREN  shift 3
+	RPAREN  shift 30
+	NEW  shift 5
+	THIS  shift 6
+	ID  shift 7
+	.  error
+
+	Term  goto 23
+	expr_argument  goto 31
+
+
+state 26
+	Term : Term . DOT ID  (29)
+	Term : Term . DOT ID LPAREN expr_argument RPAREN  (30)
+	Term : Term . DOT ID LPAREN RPAREN  (31)
+	Term : LPAREN LPAREN ID RPAREN Term . RPAREN  (34)
+
+	RPAREN  shift 32
+	DOT  shift 15
+	.  error
+
+
+state 27
+	ClassDec : CLASS ID EXTENDS ID LCURL . ClassBody RCURL  (3)
+
+	ID  shift 33
+	.  error
+
+	ClassBody  goto 34
+	fDecs  goto 35
+	Constructor  goto 36
+	fDec  goto 37
+
+
+state 28
+	Term : NEW ID LPAREN expr_argument RPAREN .  (32)
+
+	.  reduce 32
+
+
+state 29
+	expr_argument : expr_argument COLON . Term  (36)
+
+	LPAREN  shift 3
+	NEW  shift 5
+	THIS  shift 6
+	ID  shift 7
+	.  error
+
+	Term  goto 38
+
+
+state 30
+	Term : Term DOT ID LPAREN RPAREN .  (31)
+
+	.  reduce 31
+
+
+state 31
+	Term : Term DOT ID LPAREN expr_argument . RPAREN  (30)
+	expr_argument : expr_argument . COLON Term  (36)
+
+	RPAREN  shift 39
+	COLON  shift 29
+	.  error
+
+
+state 32
+	Term : LPAREN LPAREN ID RPAREN Term RPAREN .  (34)
+
+	.  reduce 34
+
+
+state 33
+	fDec : ID . ID SEMI  (10)
+	Constructor : ID . LPAREN parameter RPAREN LCURL ConBody RCURL  (11)
+	Constructor : ID . LPAREN RPAREN LCURL ConBody RCURL  (12)
+
+	LPAREN  shift 40
+	ID  shift 41
+	.  error
+
+
+state 34
+	ClassDec : CLASS ID EXTENDS ID LCURL ClassBody . RCURL  (3)
+
+	RCURL  shift 42
+	.  error
+
+
+state 35
+	ClassBody : fDecs . Constructor Methods  (4)
+	ClassBody : fDecs . Constructor  (5)
+	fDecs : fDecs . fDec  (9)
+
+	ID  shift 33
+	.  error
+
+	Constructor  goto 43
+	fDec  goto 44
+
+
+state 36
+	ClassBody : Constructor . Methods  (6)
+	ClassBody : Constructor .  (7)
+
+	ID  shift 45
+	RCURL  reduce 7
+
+	Methods  goto 46
+	Method  goto 47
+
+
+state 37
+	fDecs : fDec .  (8)
+
+	.  reduce 8
+
+
+state 38
+	Term : Term . DOT ID  (29)
+	Term : Term . DOT ID LPAREN expr_argument RPAREN  (30)
+	Term : Term . DOT ID LPAREN RPAREN  (31)
+	expr_argument : expr_argument COLON Term .  (36)
+
+	DOT  shift 15
+	RPAREN  reduce 36
+	COLON  reduce 36
+
+
+state 39
+	Term : Term DOT ID LPAREN expr_argument RPAREN .  (30)
+
+	.  reduce 30
+
+
+state 40
+	Constructor : ID LPAREN . parameter RPAREN LCURL ConBody RCURL  (11)
+	Constructor : ID LPAREN . RPAREN LCURL ConBody RCURL  (12)
+
+	RPAREN  shift 48
+	ID  shift 49
+	.  error
+
+	parameter  goto 50
+
+
+state 41
+	fDec : ID ID . SEMI  (10)
+
+	SEMI  shift 51
+	.  error
+
+
+state 42
+	ClassDec : CLASS ID EXTENDS ID LCURL ClassBody RCURL .  (3)
+
+	.  reduce 3
+
+
+state 43
+	ClassBody : fDecs Constructor . Methods  (4)
+	ClassBody : fDecs Constructor .  (5)
+
+	ID  shift 45
+	RCURL  reduce 5
+
+	Methods  goto 52
+	Method  goto 47
+
+
+state 44
+	fDecs : fDecs fDec .  (9)
+
+	.  reduce 9
+
+
+state 45
+	Method : ID . ID LPAREN parameter RPAREN LCURL RET Term SEMI RCURL  (25)
+	Method : ID . ID LPAREN RPAREN LCURL RET Term SEMI RCURL  (26)
+
+	ID  shift 53
+	.  error
+
+
+state 46
+	ClassBody : Constructor Methods .  (6)
+	Methods : Methods . Method  (24)
+
+	ID  shift 45
+	RCURL  reduce 6
+
+	Method  goto 54
+
+
+state 47
+	Methods : Method .  (23)
+
+	.  reduce 23
+
+
+state 48
+	Constructor : ID LPAREN RPAREN . LCURL ConBody RCURL  (12)
+
+	LCURL  shift 55
+	.  error
+
+
+state 49
+	parameter : ID . ID  (19)
+
+	ID  shift 56
+	.  error
+
+
+state 50
+	Constructor : ID LPAREN parameter . RPAREN LCURL ConBody RCURL  (11)
+	parameter : parameter . COLON ID ID  (20)
+
+	RPAREN  shift 57
+	COLON  shift 58
+	.  error
+
+
+state 51
+	fDec : ID ID SEMI .  (10)
+
+	.  reduce 10
+
+
+state 52
+	ClassBody : fDecs Constructor Methods .  (4)
+	Methods : Methods . Method  (24)
+
+	ID  shift 45
+	RCURL  reduce 4
+
+	Method  goto 54
+
+
+state 53
+	Method : ID ID . LPAREN parameter RPAREN LCURL RET Term SEMI RCURL  (25)
+	Method : ID ID . LPAREN RPAREN LCURL RET Term SEMI RCURL  (26)
+
+	LPAREN  shift 59
+	.  error
+
+
+state 54
+	Methods : Methods Method .  (24)
+
+	.  reduce 24
+
+
+state 55
+	Constructor : ID LPAREN RPAREN LCURL . ConBody RCURL  (12)
+
+	SUPER  shift 60
+	.  error
+
+	ConBody  goto 61
+
+
+state 56
+	parameter : ID ID .  (19)
+
+	.  reduce 19
+
+
+state 57
+	Constructor : ID LPAREN parameter RPAREN . LCURL ConBody RCURL  (11)
+
+	LCURL  shift 62
+	.  error
+
+
+state 58
+	parameter : parameter COLON . ID ID  (20)
+
+	ID  shift 63
+	.  error
+
+
+state 59
+	Method : ID ID LPAREN . parameter RPAREN LCURL RET Term SEMI RCURL  (25)
+	Method : ID ID LPAREN . RPAREN LCURL RET Term SEMI RCURL  (26)
+
+	RPAREN  shift 64
+	ID  shift 49
+	.  error
+
+	parameter  goto 65
+
+
+state 60
+	ConBody : SUPER . LPAREN RPAREN SEMI  (13)
+	ConBody : SUPER . LPAREN super_argument RPAREN SEMI  (14)
+	ConBody : SUPER . LPAREN super_argument RPAREN SEMI These  (15)
+	ConBody : SUPER . LPAREN RPAREN SEMI These  (16)
+
+	LPAREN  shift 66
+	.  error
+
+
+state 61
+	Constructor : ID LPAREN RPAREN LCURL ConBody . RCURL  (12)
+
+	RCURL  shift 67
+	.  error
+
+
+state 62
+	Constructor : ID LPAREN parameter RPAREN LCURL . ConBody RCURL  (11)
+
+	SUPER  shift 60
+	.  error
+
+	ConBody  goto 68
+
+
+state 63
+	parameter : parameter COLON ID . ID  (20)
+
+	ID  shift 69
+	.  error
+
+
+state 64
+	Method : ID ID LPAREN RPAREN . LCURL RET Term SEMI RCURL  (26)
+
+	LCURL  shift 70
+	.  error
+
+
+state 65
+	parameter : parameter . COLON ID ID  (20)
+	Method : ID ID LPAREN parameter . RPAREN LCURL RET Term SEMI RCURL  (25)
+
+	RPAREN  shift 71
+	COLON  shift 58
+	.  error
+
+
+state 66
+	ConBody : SUPER LPAREN . RPAREN SEMI  (13)
+	ConBody : SUPER LPAREN . super_argument RPAREN SEMI  (14)
+	ConBody : SUPER LPAREN . super_argument RPAREN SEMI These  (15)
+	ConBody : SUPER LPAREN . RPAREN SEMI These  (16)
+
+	RPAREN  shift 72
+	ID  shift 73
+	.  error
+
+	super_argument  goto 74
+
+
+state 67
+	Constructor : ID LPAREN RPAREN LCURL ConBody RCURL .  (12)
+
+	.  reduce 12
+
+
+state 68
+	Constructor : ID LPAREN parameter RPAREN LCURL ConBody . RCURL  (11)
+
+	RCURL  shift 75
+	.  error
+
+
+state 69
+	parameter : parameter COLON ID ID .  (20)
+
+	.  reduce 20
+
+
+state 70
+	Method : ID ID LPAREN RPAREN LCURL . RET Term SEMI RCURL  (26)
+
+	RET  shift 76
+	.  error
+
+
+state 71
+	Method : ID ID LPAREN parameter RPAREN . LCURL RET Term SEMI RCURL  (25)
+
+	LCURL  shift 77
+	.  error
+
+
+state 72
+	ConBody : SUPER LPAREN RPAREN . SEMI  (13)
+	ConBody : SUPER LPAREN RPAREN . SEMI These  (16)
+
+	SEMI  shift 78
+	.  error
+
+
+state 73
+	super_argument : ID .  (21)
+
+	.  reduce 21
+
+
+state 74
+	ConBody : SUPER LPAREN super_argument . RPAREN SEMI  (14)
+	ConBody : SUPER LPAREN super_argument . RPAREN SEMI These  (15)
+	super_argument : super_argument . COLON ID  (22)
+
+	RPAREN  shift 79
+	COLON  shift 80
+	.  error
+
+
+state 75
+	Constructor : ID LPAREN parameter RPAREN LCURL ConBody RCURL .  (11)
+
+	.  reduce 11
+
+
+state 76
+	Method : ID ID LPAREN RPAREN LCURL RET . Term SEMI RCURL  (26)
+
+	LPAREN  shift 3
+	NEW  shift 5
+	THIS  shift 6
+	ID  shift 7
+	.  error
+
+	Term  goto 81
+
+
+state 77
+	Method : ID ID LPAREN parameter RPAREN LCURL . RET Term SEMI RCURL  (25)
+
+	RET  shift 82
+	.  error
+
+
+state 78
+	ConBody : SUPER LPAREN RPAREN SEMI .  (13)
+	ConBody : SUPER LPAREN RPAREN SEMI . These  (16)
+
+	THIS  shift 83
+	RCURL  reduce 13
+
+	These  goto 84
+
+
+state 79
+	ConBody : SUPER LPAREN super_argument RPAREN . SEMI  (14)
+	ConBody : SUPER LPAREN super_argument RPAREN . SEMI These  (15)
+
+	SEMI  shift 85
+	.  error
+
+
+state 80
+	super_argument : super_argument COLON . ID  (22)
+
+	ID  shift 86
+	.  error
+
+
+state 81
+	Method : ID ID LPAREN RPAREN LCURL RET Term . SEMI RCURL  (26)
+	Term : Term . DOT ID  (29)
+	Term : Term . DOT ID LPAREN expr_argument RPAREN  (30)
+	Term : Term . DOT ID LPAREN RPAREN  (31)
+
+	SEMI  shift 87
+	DOT  shift 15
+	.  error
+
+
+state 82
+	Method : ID ID LPAREN parameter RPAREN LCURL RET . Term SEMI RCURL  (25)
+
+	LPAREN  shift 3
+	NEW  shift 5
+	THIS  shift 6
+	ID  shift 7
+	.  error
+
+	Term  goto 88
+
+
+state 83
+	These : THIS . DOT ID EQ ID SEMI  (17)
+	These : THIS . DOT ID EQ ID SEMI These  (18)
+
+	DOT  shift 89
+	.  error
+
+
+state 84
+	ConBody : SUPER LPAREN RPAREN SEMI These .  (16)
+
+	.  reduce 16
+
+
+state 85
+	ConBody : SUPER LPAREN super_argument RPAREN SEMI .  (14)
+	ConBody : SUPER LPAREN super_argument RPAREN SEMI . These  (15)
+
+	THIS  shift 83
+	RCURL  reduce 14
+
+	These  goto 90
+
+
+state 86
+	super_argument : super_argument COLON ID .  (22)
+
+	.  reduce 22
+
+
+state 87
+	Method : ID ID LPAREN RPAREN LCURL RET Term SEMI . RCURL  (26)
+
+	RCURL  shift 91
+	.  error
+
+
+state 88
+	Method : ID ID LPAREN parameter RPAREN LCURL RET Term . SEMI RCURL  (25)
+	Term : Term . DOT ID  (29)
+	Term : Term . DOT ID LPAREN expr_argument RPAREN  (30)
+	Term : Term . DOT ID LPAREN RPAREN  (31)
+
+	SEMI  shift 92
+	DOT  shift 15
+	.  error
+
+
+state 89
+	These : THIS DOT . ID EQ ID SEMI  (17)
+	These : THIS DOT . ID EQ ID SEMI These  (18)
+
+	ID  shift 93
+	.  error
+
+
+state 90
+	ConBody : SUPER LPAREN super_argument RPAREN SEMI These .  (15)
+
+	.  reduce 15
+
+
+state 91
+	Method : ID ID LPAREN RPAREN LCURL RET Term SEMI RCURL .  (26)
+
+	.  reduce 26
+
+
+state 92
+	Method : ID ID LPAREN parameter RPAREN LCURL RET Term SEMI . RCURL  (25)
+
+	RCURL  shift 94
+	.  error
+
+
+state 93
+	These : THIS DOT ID . EQ ID SEMI  (17)
+	These : THIS DOT ID . EQ ID SEMI These  (18)
+
+	EQ  shift 95
+	.  error
+
+
+state 94
+	Method : ID ID LPAREN parameter RPAREN LCURL RET Term SEMI RCURL .  (25)
+
+	.  reduce 25
+
+
+state 95
+	These : THIS DOT ID EQ . ID SEMI  (17)
+	These : THIS DOT ID EQ . ID SEMI These  (18)
+
+	ID  shift 96
+	.  error
+
+
+state 96
+	These : THIS DOT ID EQ ID . SEMI  (17)
+	These : THIS DOT ID EQ ID . SEMI These  (18)
+
+	SEMI  shift 97
+	.  error
+
+
+state 97
+	These : THIS DOT ID EQ ID SEMI .  (17)
+	These : THIS DOT ID EQ ID SEMI . These  (18)
+
+	THIS  shift 83
+	RCURL  reduce 17
+
+	These  goto 98
+
+
+state 98
+	These : THIS DOT ID EQ ID SEMI These .  (18)
+
+	.  reduce 18
+
+
+18 terminals, 16 nonterminals
+38 grammar rules, 99 states

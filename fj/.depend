@@ -1,0 +1,18 @@
+environment.cmi: syntax.cmx
+parser.cmi: syntax.cmx
+environment.cmo: syntax.cmx environment.cmi
+environment.cmx: syntax.cmx environment.cmi
+eval\ -\ コピー.cmo: syntax.cmx environment.cmi
+eval\ -\ コピー.cmx: syntax.cmx environment.cmx
+eval.cmo: syntax.cmx environment.cmi
+eval.cmx: syntax.cmx environment.cmx
+lexer.cmo: parser.cmi
+lexer.cmx: parser.cmx
+main.cmo: typing.cmx syntax.cmx parser.cmi lexer.cmx eval.cmx environment.cmi
+main.cmx: typing.cmx syntax.cmx parser.cmx lexer.cmx eval.cmx environment.cmx
+parser.cmo: syntax.cmx parser.cmi
+parser.cmx: syntax.cmx parser.cmi
+syntax.cmo:
+syntax.cmx:
+typing.cmo: syntax.cmx environment.cmi
+typing.cmx: syntax.cmx environment.cmx
